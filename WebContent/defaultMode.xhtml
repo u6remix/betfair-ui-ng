@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<div id="leftbar">
+		<h:form id="form">
+			<p:growl id="growl" showDetail="false" />
+			<p:scrollPanel style="width:450px;height:700px;">
+			<p:tree value="#{tree.root}" var="node" id="tree" dynamic="true"
+				selectionMode="single" selection="#{treeBean.selectedNode}">
+				<p:ajax event="select"  update=":form,:marketForm"
+					listener="#{tree.onNodeSelect}" />
+				<p:ajax event="expand" update=":form,:marketForm" 
+					listener="#{tree.onNodeExpand}" />
+				
+				<p:treeNode type="root" id="treeRootNode">
+					<h:outputText value="Sport" id="lblRoot" />
+				</p:treeNode>
+				<p:treeNode type="eventType" id="treeNodeTypeEvent">
+					<h:outputText value="#{node.name}" id="lblNodeTypeEvent" />
+				</p:treeNode>
+				<p:treeNode type="event" id="treeNodeEvent">
+					<h:outputText value="#{node.eventName}" id="lblNodeEvent" />
+				</p:treeNode>
+				<p:treeNode type="market" id="treeNodeMarket">
+					<h:outputText value="#{node.marketName}" id="lblNodeMarket" />
+				</p:treeNode>
+			</p:tree>
+			</p:scrollPanel>			
+		</h:form>
+	</div>
+	<div id="content">
+		<ui:include src="marketDataTable.xhtml"/>
+	</div>
+	
+</ui:composition>

@@ -1,0 +1,82 @@
+@CHARSET "UTF-8";
+
+* {
+   margin: 0;
+   padding: 0;
+}
+ html {height: 100%;}
+ body {
+   height: auto !important;
+   height: 100%;
+   min-height: 100%;
+   position: relative;
+}
+
+#header { background: #d9d9d9; }
+#topmenu{
+	
+	}
+#container { 
+ 	position: relative;
+	padding-bottom: 40px;
+	font-size: 10px;
+	height:100%; 
+	}
+	
+#leftbar { 
+	background: #C7E3E4; 
+	width: 305px;
+	float:left;
+	 }
+#content {
+	position:block;
+	margin: 0 0px 0 310px;/*right to left*/
+	}
+	
+#footer{
+	position: absolute;
+	   bottom: 0;
+	   height: 40px;
+	   width:100%;
+	   text-align: center;
+	   background: #CCCCCC;
+	}
+.errorMessage{
+		color:red;
+	}
+.successMessage{
+		color:#006600;
+	}
+.authorization{
+		font-size: 14px;
+	}
+.button_authorization{
+	margin-top: 1%;
+	margin-left: 5%;
+	}
+.columnBlue{
+	background-color: #99CCFF;
+	width:33%;
+	border:solid;
+	}
+.columnRed{
+	background-color: #FFCCCC;
+	width:33%;
+	border:solid;
+	}
+.smallSize{
+	font-size:80% !important;
+}
+.hide-column-names table thead tr {
+    display: none;
+}
+.greyBackground{
+	background-color:#F5F5F5;
+}
+
+.hide-td-border table tbody tr td{
+	border-style:none;
+}
+.hide-td-border tbody tr td{
+	border-style:none;
+}

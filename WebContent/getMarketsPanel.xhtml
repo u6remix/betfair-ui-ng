@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<div id="leftbar">
+<h:form id="marketSearchRestrForm">
+			<p:panel header="Filter by date">
+				<p:commandButton value="Today" update="marketSearchRestrForm" actionListener="#{getMarkets.dateToday}"/>
+				<p:splitButton value="Tommorow" update="marketSearchRestrForm" actionListener="#{getMarkets.dateTodayAndTommorow}">
+					<p:menuitem styleClass="smallSize" value="Today and Tommorow" update="marketSearchRestrForm" actionListener="#{getMarkets.dateTodayAndTommorow}"/>
+					<p:menuitem styleClass="smallSize" value="Only Tommorow" update="marketSearchRestrForm" actionListener="#{getMarkets.dateTommorow}"/>
+				</p:splitButton>
+				<p:splitButton value="NextDays" update="marketSearchRestrForm" actionListener="#{getMarkets.dateThreeNextDays}">
+					<p:menuitem styleClass="smallSize" value="Today and next 3 days" update="marketSearchRestrForm" actionListener="#{getMarkets.dateThreeNextDays}"/>
+					<p:menuitem styleClass="smallSize" value="Today and next 5 days" update="marketSearchRestrForm" actionListener="#{getMarkets.dateFiveNextDays}"/>
+				</p:splitButton>
+				<table>
+					<tr>
+						<td>From date</td>
+						<td><p:calendar  style="font-size:80% !important" styleClass="smallSize" value="#{getMarkets.dateFrom}" pattern="MM/dd/yyyy HH:mm" /></td>
+					</tr>
+					<tr>
+						<td>To date</td>
+						<td><p:calendar style="font-size:80% !important" styleClass="smallSize" value="#{getMarkets.dateTo}" pattern="MM/dd/yyyy HH:mm" /></td>
+					</tr>
+				</table>
+		</p:panel>
+		<p:panel header="Filter by country/competition">
+		
+			<p:selectCheckboxMenu id="countries" value="#{getMarkets.selectedCountries}" label="Countries" filter="true" filterText="Filter" 
+			filterMatchMode="startsWith" onHide="executeOnOnhide();" panelStyle="width:180px;font-size:70%">  
+        		<f:selectItems value="#{getMarkets.countries}" var="country" itemLabel="#{country.fullName}" itemValue="#{country}" />
+    		</p:selectCheckboxMenu>
+    		
+    		<p:remoteCommand  name="executeOnOnhide" update="competitions" process="@this countries" action="#{getMarkets.loadCompetitions()}"/>  
+			
+			<p:separator style="margin-bottom:10px;margin-top:10px;"/>  
+			<p:panel header="Competitions" toggleable="true">
+				<p:selectManyMenu  id="competitions" value="#{getMarkets.selectedCompetitions}" style="height:250px;width:250px;" showCheckbox="true">  
+            		<f:selectItems  value="#{getMarkets.competitions}" var="competition" itemLabel="#{competition.name}" itemValue="#{competition.id}" />    
+	       		</p:selectManyMenu>
+	       	</p:panel> 	       		
+
+		</p:panel>
+		<table>
+			<tr>
+				<td>
+					<p:commandButton value="Clean" update=":marketSearchRestrForm,:topmenuForm:growl" actionListener="#{getMarkets.clear}"/>
+				</td>
+				<td>
+					<p:commandButton value="Search" update=":eventForm" actionListener="#{getMarkets.searchEvents}"/>
+				</td>
+			</tr>
+		</table>
+</h:form>
+</div>
+
+<div id="content">
+	<h:form id="eventForm">
+	<p:panel id="eventPanel" widgetVar="eventPanelWidget" closable="true" >	
+	<p:dataTable id="eventTable" var="event" value="#{getMarkets.events}" rowKey="#{event.id}" selectionMode="single"
+		widgetVar="eventTableWidget">  
+  
+        <p:ajax event="rowSelect" listener="#{getMarkets.onEventRowSelect}" oncomplete="eventPanelWidget.close();marketPanelWidget.show();"
+        	 update=":eventForm"/>  
+  
+        <f:facet name="header">  
+            Search result. Please click on event to see detailed information 
+        </f:facet>   
+  
+        <p:column style="width:50%">  
+            <f:facet name="header">  
+                    Name  
+            </f:facet>  
+            <h:outputText value="#{event.name}" />  
+        </p:column>  
+  
+        <p:column sortBy="openDate" style="width:50%">  
+            <f:facet name="header">  
+                    Open Date  
+            </f:facet>  
+            <h:outputText value="#{event.openDate}">
+            	<f:convertDateTime timeZone="#{action.displayedTimeZone}" pattern="MM/dd/yyyy HH:mm"/>
+            </h:outputText>  
+        </p:column>  
+	    	  
+    </p:dataTable>
+    </p:panel>
+    <p:panel id="marketsPanel" style="display:none" widgetVar="marketPanelWidget" closable="true">
+
+    			<!-- START MARKETS DATATABLE -->
+			<p:dataTable id="marketsTable" var="market" value="#{getMarkets.markets}">  
+		    	<f:facet name="header">
+		    	  	<table width="100%">
+						<tr>
+					    	<td style="float:left;border-style:none;">
+					    		<p:commandButton onclick="marketPanelWidget.close();eventPanelWidget.show();" 
+					    			title="Return back to the list of events" value="Go back"/>
+					    	</td>
+						    <td width="70%" style="text-align:center; font-size:16px;font-weight:bold;border-style:none;">
+						    	<p:outputLabel title="Event name" value="#{getMarkets.selectedEvent.name}"/>
+						    </td>
+						    <td style="float:right; text-align:center;border-style:none;">
+						    	<p:outputLabel title="County code" value="#{getMarkets.selectedEvent.countryCode}"/> &nbsp;
+						    	<p:outputLabel title="Competition name" value="#{getMarkets.selectedEventCompetition.name}"/><br/>
+					    		<p:outputLabel title="Start time" value="#{getMarkets.selectedEvent.openDate}">
+					    			<f:convertDateTime timeZone="#{action.displayedTimeZone}" pattern="MM/dd/yyyy HH:mm"/>
+					    		</p:outputLabel>
+					    	</td>
+					    </tr>
+    				</table>
+            		Full list of available markets. Please expand row to see detailed information. 
+        		</f:facet> 
+		        <p:ajax event="rowToggle" listener="#{getMarkets.onMarketRowToggle}" update="" />  
+		  
+		        <p:column style="width:2%">  
+		            <p:rowToggler />  
+		        </p:column>  
+		  
+		        <p:column sortBy="marketName" style="width:49%">  
+		            <f:facet name="header">  
+		                    Name  
+		            </f:facet>  
+		            <h:outputText value="#{market.marketName}" />  
+		        </p:column>  
+		  
+		        <p:column sortBy="totalMatched" style="width:49%">  
+		            <f:facet name="header">  
+		                    TotalMatched  
+		            </f:facet>  
+		            <h:outputText value="#{market.totalMatched}" >
+		            	<f:convertNumber type="number" />
+		            </h:outputText>  
+		        </p:column>  
+		  
+		        <p:rowExpansion styleClass="greyBackground">  
+					<ui:include src="marketDataTable.xhtml"/>
+		        </p:rowExpansion>  
+	    	</p:dataTable>
+	    	<!-- END MARKETS DATATABLE -->  
+	</p:panel>
+	</h:form>
+</div>
+
+</ui:composition>

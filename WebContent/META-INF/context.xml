@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+<!-- 
+	This context file isn't loaded by Tomcat,
+	all context-resources must be added in corresponding files of server 
+-->
+
+<!-- 
+	Custom connection pool
+	must be added in conf/server.xml 
+-->
+ <Resource name="jdbc/betfairDB"
+        auth="Container" 
+        description="DB Connection" 
+        username="root" 
+        password="2222"
+        driverClassName="com.mysql.jdbc.Driver" 
+        url="jdbc:mysql://localhost:3306/betfairdb?useUnicode=yes&amp;characterEncoding=UTF-8" 
+        maxActive="10" 
+        maxIdle="10" 
+        maxWait="100"
+        factory="org.apache.tomcat.jdbc.pool.DataSourceFactory" 
+        type="javax.sql.DataSource"/>
+ 
+</Context>

@@ -1,0 +1,1 @@
+-Dcatalina.base="C:\Users\RemiX\workspace\.metadata\.plugins\org.eclipse.wst.server.core\tmp4" -Dcatalina.home="C:\apache-tomcat-7.0.47" -Dwtp.deploy="C:\Users\RemiX\workspace\.metadata\.plugins\org.eclipse.wst.server.core\tmp4\wtpwebapps" -Djava.endorsed.dirs="C:\apache-tomcat-7.0.47\endorsed" -Duser.timezone="Europe/Moscow"

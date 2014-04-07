@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+  <title><ui:insert name="title">Default title</ui:insert></title>
+   <h:outputStylesheet library="css" name="style.css" />
+</h:head>
+
+<h:body>
+<div id="header">
+<p:graphicImage style="display: block;margin-left: auto;margin-right: auto;" value="/resources/image/logo.png" />  
+</div>
+<div id="topmenu">
+	<h:form id="topmenuForm">
+	<p:growl id="growl" showDetail="false" />
+	<p:tabMenu activeIndex="#{action.selectedIndex}" >
+		<p:menuitem  disabled="#{action.isLogged}" actionListener="#{action.login}" value="Login" update=":contentPanel,:topmenuForm"/>
+		<p:menuitem disabled="#{not action.isLogged}" actionListener="#{action.toGetMarkets}" value="Get Markets" update=":contentPanel,:topmenuForm"/>
+		<p:menuitem actionListener="#{action.toStatistics}" value="Statistics" update=":contentPanel,:topmenuForm"/>
+		<p:menuitem disabled="#{not action.isLogged}" actionListener="#{action.logout}" value="Logout" update=":contentPanel,:topmenuForm"/>	
+	</p:tabMenu>
+</h:form>
+</div>
+
+<div id="container">
+	<h:panelGroup id="contentPanel" layout="block">
+		<ui:insert name="content">
+		</ui:insert>
+	</h:panelGroup>
+</div>
+
+<div id="footer">
+	<p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>           
+	<p:dialog widgetVar="statusDialog" resizable="false" draggable="false" closable="false" header="Processing..." showEffect="explode" hideEffect="explode">  
+			<p:graphicImage value="/resources/image/balls64.gif" />
+	</p:dialog> 
+</div>
+
+</h:body>
+
+</html>

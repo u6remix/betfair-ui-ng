@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+ <h:outputScript name="amcharts.js" library="amcharts"/>
+  <h:outputScript name="serial.js" library="amcharts"/>
+ <h:outputScript name="amstock.js" library="amcharts"/>
+ <h:outputScript name="intradayDataChart.js" library="amcharts"/>
+ <h:outputStylesheet library="amcharts" name="style.css" />
+ <p:layout id="statLayout" style="min-height:650px">
+
+<p:layoutUnit header="Search Menu" position="west" closable="true" collapsible="true">
+<!-- SEARCH FROM ON THE LEFT -->
+		<h:form id="searchSnapshotForm">
+			<p:panelMenu>
+				<p:submenu label="Snapshots">
+				<p:menuitem>
+					<p:commandButton value="Search" actionListener="${statistics.search}" update=":snapshotsTableForm"/>
+				</p:menuitem>
+				</p:submenu>
+			</p:panelMenu>			
+		</h:form>
+<!-- END SEARCH FORM -->
+</p:layoutUnit>
+<p:layoutUnit id="snapshpotsUnit" position="center">
+		<!-- MAIN CONTENT -  SNAPSHOTS DATATABLE ON THE CENTER  -->
+		<h:form id="snapshotsTableForm">
+		    <p:dataTable id="snapshotsTable" var="snapshot" value="#{statistics.snapshotsList}" 
+		    	rendered="#{statistics.isChartDisplay == false}">  
+	  
+	        <p:column headerText="Menu Path" >  
+	            <h:outputText value="#{snapshot.menuPath}" />  
+	        </p:column>  
+	  
+	        <p:column headerText="Market Name">  
+	            <h:outputText value="#{snapshot.marketName}" />  
+	        </p:column>  
+	  
+	        <p:column sortBy="eventDate" headerText="Event Date">  
+	            <h:outputText value="#{snapshot.eventDate}" >
+	            	<f:convertDateTime timeZone="#{action.displayedTimeZone}" pattern="MM/dd/yyyy HH:mm"/>
+	            </h:outputText>
+	        </p:column> 
+	  
+	        <p:column headerText="Count snapshots">  
+	            <h:outputText value="#{snapshot.runners[0].countSnapshots}" />  
+	        </p:column>  
+	  
+	        <p:column>  
+	                <p:commandButton id="selectButton" update=":snapshotsTableForm" oncomplete="drawChart(args);" icon="ui-icon-search" title="View">  
+	                <f:setPropertyActionListener value="#{snapshot}" target="#{statistics.selectedSnapshot}" />  
+	            </p:commandButton>  
+	        </p:column>  
+	  
+	    </p:dataTable>
+	    <!-- END SNAPSHTS DATATABLE ON THE CENTER -->
+	    		    <!-- CHART PANEL -->
+	    <p:panel id="displayChart" rendered="#{statistics.isChartDisplay==true}">
+	    
+	    	Menu path: <h:outputText value="#{statistics.selectedSnapshot.menuPath}"/>
+	    	Market name: <h:outputText value="#{statistics.selectedSnapshot.marketName}"/> 
+			<p:selectOneMenu value="#{statistics.selectedRunnerOrderIndex}" effect="fade">   
+	            <f:selectItems value="#{statistics.selectedSnapshot.runners}" var="runner" itemLabel="#{runner.name}" itemValue="#{runner.orderIndex}"/>  
+                <p:ajax update="snapshotsTableForm"  
+                        listener="#{statistics.handleSelectedRunner}" oncomplete="drawChart(args);"/>  
+	        </p:selectOneMenu>  
+	    	
+  			<div id="chartdiv" style="width:100%;min-height:600px"></div>
+        
+        </p:panel>
+        <!-- END CHART PANEL -->
+
+    </h:form>  
+
+ </p:layoutUnit>
+
+</p:layout>
+
+</ui:composition>

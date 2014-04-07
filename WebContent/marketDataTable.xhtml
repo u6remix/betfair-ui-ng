@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:form id="oddsForm">  
+
+	<table width="100%" class="hide-td-border">
+		<tr>
+			<td>
+				<table>
+					<tr>
+						<td style="text-align:right">
+							<p:outputLabel value="Status:"/>
+						</td>
+						<td style="text-align:left">
+							<p:outputLabel value="#{getMarkets.selectedMarket.status}"/>
+						</td>
+					</tr>
+					<tr>
+						<td style="text-align:right">
+							<p:outputLabel value="In Play:"/>
+						</td>
+						<td style="text-align:left">
+							<p:outputLabel value="#{getMarkets.selectedMarket.inplay}"/>
+						</td>						
+					</tr>
+					<tr>
+						<td style="text-align:right">
+							<p:outputLabel title="Some description" value="Total Probability By Odds:"/>
+						</td>
+						<td style="text-align:left">
+							<p:outputLabel value="#{getMarkets.selectedMarket.totalProbabilityByOdds}">
+								<f:convertNumber type="number" />
+							</p:outputLabel>
+						</td>						
+					</tr>
+				</table>
+			</td>
+			<td style="padding-left:10%">
+				<table>
+					<tr>
+						<td style="text-align:right">
+							<p:outputLabel value="Total Available"/>
+						</td>
+						<td style="text-align:left">
+							<p:outputLabel value="#{getMarkets.selectedMarket.totalAvailable}">
+								<f:convertNumber type="number" />
+							</p:outputLabel>
+						</td>
+					</tr>
+					<tr>
+						<td style="text-align:right">
+							<p:outputLabel value="Last Match Time:"/>
+						</td>
+						<td style="text-align:left">
+							<p:outputLabel value="#{getMarkets.selectedMarket.lastMatchTime}">
+								<f:convertDateTime timeZone="#{action.displayedTimeZone}" pattern="MM/dd/yyyy HH:mm"/>
+							</p:outputLabel>
+						</td>						
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+
+	<p:dataTable styleClass="hide-column-names" var="runner"  value="#{getMarkets.selectedMarket.runners}"
+		rowKey="#{runner.selectionId}" selectionMode="single" >	
+
+        <p:ajax event="rowSelect" listener="#{getMarkets.onRunnerRowSelect}" oncomplete="runnerDialog.show()" update=":eventForm:marketsTable:oddsForm"/>
+
+		<p:column style="width:35%">
+			<p:outputLabel value="#{runner.runnerName}"/>
+		</p:column>
+		
+		<p:column>
+			<p:dataTable styleClass="hide-column-names" value="#{runner.runnerName}">
+				<p:columns styleClass="columnBlue" var="back" value="#{runner.ex.availableToBackReorder}">
+						<h:outputText value="#{back.price}" style="font-weight:bold">
+							<f:convertNumber type="number" />
+						</h:outputText>
+						<br />
+						<h:outputText value="#{back.size}">
+							<f:convertNumber type="number" />
+						</h:outputText>
+				</p:columns>
+			</p:dataTable>
+		</p:column>
+		
+		<p:column>
+			<p:dataTable styleClass="hide-column-names" value="#{runner.runnerName}">
+				<p:columns styleClass="columnRed" var="lay" value="#{runner.ex.availableToLay}">
+					<p:outputLabel value="#{lay.price}" style="font-weight:bold">
+						<f:convertNumber type="number" />
+					</p:outputLabel>
+					<br />
+					<h:outputText value="#{lay.size}">
+						<f:convertNumber type="number" />
+					</h:outputText>
+				</p:columns>
+			</p:dataTable>
+		</p:column>
+
+	</p:dataTable>
+	
+	    <p:dialog id="dialog" header="#{getMarkets.selectedRunner.runnerName} traded volume details" widgetVar="runnerDialog" resizable="false"  
+                showEffect="fade" hideEffect="explode">
+                <table width="100%" class="hide-td-border">
+                	<tr>
+                		<td>Total Matched: </td>
+                		<td>
+                			<p:outputLabel value="#{getMarkets.selectedRunner.totalMatched}">
+                				<f:convertNumber type="number" />
+                			</p:outputLabel>
+                		</td>
+                	</tr>
+                	<tr>
+                		<td>Last Price Traded: </td>
+                		<td><p:outputLabel value="#{getMarkets.selectedRunner.lastPriceTraded}"/></td>
+                	</tr>
+                	<tr>
+                		<td>Probability By Odds: </td>
+                		<td>
+                			<p:outputLabel value="#{getMarkets.selectedRunner.probabilityByOdds}">
+                				<f:convertNumber type="number" />
+                			</p:outputLabel>
+                		</td>
+                	</tr>
+                	<tr>
+                		<td>Fair Probability By Odds: </td>
+                		<td>
+                			<p:outputLabel value="#{getMarkets.selectedRunner.fairProbabilityByOdds}">
+                				<f:convertNumber type="number" />
+                			</p:outputLabel>
+                		</td>
+                	</tr>
+                	<tr>
+                		<td>Probability By Amounts: </td>
+                		<td>
+                			<p:outputLabel value="#{getMarkets.selectedRunner.probabilityByAmounts}">
+                				<f:convertNumber type="number" />
+                			</p:outputLabel>
+                		</td>
+                	</tr>                	
+                </table>
+        	<p:dataTable id="runnerTradedVolumes" var="volume" value="#{getMarkets.selectedRunner.ex.tradedVolume}">      
+        		<p:column sortBy="price" headerText="Price">  
+            		<h:outputText value="#{volume.price}" />  
+        		</p:column>
+        		<p:column sortBy="size" headerText="Size">  
+            		<h:outputText value="#{volume.size}" />  
+        		</p:column>  
+  			</p:dataTable> 
+        </p:dialog>
+	  
+  	<p:commandButton value="SaveMarket" actionListener="#{getMarkets.clear}"/>  
+ 
+</h:form>
+</html>
